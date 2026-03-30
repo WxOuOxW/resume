@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ning-Wei Tsai — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f5f2ed;
+    --accent: #c8402a;
+    --muted: #7a7468;
+    --line: #d4cfc8;
+    --card: #ffffff;
+    --tag-bg: #ede9e3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: .4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(245,242,237,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+    text-decoration: none; color: var(--muted);
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 72px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 5rem 3rem 4rem;
+    border-right: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left::before {
+    content: 'NWT';
+    position: absolute; bottom: -1rem; left: -1rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22rem; line-height: 1;
+    color: var(--ink); opacity: .04;
+    pointer-events: none; user-select: none;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; letter-spacing: .18em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    line-height: 1.05;
+    margin-bottom: 2rem;
+  }
+  .hero-name em { font-style: italic; color: var(--muted); }
+  .hero-tagline {
+    font-size: 1rem; color: var(--muted);
+    max-width: 38ch; line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: var(--ink); color: var(--paper);
+    padding: .75rem 1.6rem;
+    font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+    text-decoration: none;
+    transition: background .2s, transform .2s;
+    width: fit-content;
+  }
+  .hero-cta:hover { background: var(--accent); transform: translateY(-2px); }
+
+  .hero-right {
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 5rem 3rem 4rem;
+  }
+  .hero-meta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    margin-top: auto;
+  }
+  .meta-item label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .15em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: .3rem;
+  }
+  .meta-item span { font-size: .9rem; font-weight: 500; }
+
+  .photo-placeholder {
+    width: 100%; aspect-ratio: 3/4;
+    background: var(--tag-bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: .5rem; cursor: pointer;
+    border: 2px dashed var(--line);
+    transition: border-color .2s, background .2s;
+    position: relative; overflow: hidden;
+    max-height: 380px;
+  }
+  .photo-placeholder:hover { border-color: var(--accent); background: #f0ebe3; }
+  .photo-placeholder input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+  }
+  .photo-placeholder img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+  }
+  .photo-placeholder .upload-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    text-align: center; pointer-events: none;
+    z-index: 1;
+  }
+  .photo-placeholder .upload-icon { font-size: 1.5rem; pointer-events: none; z-index: 1; }
+  .photo-placeholder.has-image .upload-hint,
+  .photo-placeholder.has-image .upload-icon { display: none; }
+
+  /* ── SECTIONS ── */
+  section { border-bottom: 1px solid var(--line); }
+
+  .section-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 5rem 3rem;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 3.5rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-number {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .15em;
+    color: var(--accent); text-transform: uppercase;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--line);
+  }
+  .skill-cell {
+    background: var(--paper);
+    padding: 2rem 1.8rem;
+  }
+  .skill-cell-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .12em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: .8rem;
+  }
+  .skill-cell p { font-size: .88rem; color: var(--muted); line-height: 1.9; }
+
+  /* ── EXPERIENCE CARD GRID ── */
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .exp-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    padding: 1.8rem 2rem 2rem;
+    display: flex; flex-direction: column;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+    position: relative; overflow: hidden;
+  }
+  .exp-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--line));
+  }
+  .exp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(0,0,0,.07);
+  }
+  .exp-card.featured {
+    border-color: var(--accent);
+    grid-column: span 2;
+    --card-accent: var(--accent);
+  }
+  .exp-card-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 1rem;
+    margin-bottom: .9rem;
+  }
+  .exp-card-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: .58rem; letter-spacing: .1em;
+    text-transform: uppercase; white-space: nowrap;
+    padding: .2rem .55rem;
+    background: var(--tag-bg); color: var(--muted);
+    flex-shrink: 0;
+  }
+  .exp-card-badge.award { background: #fdf3e7; color: #9a6200; }
+  .exp-date {
+    font-family: 'Space Mono', monospace;
+    font-size: .63rem; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: .35rem;
+  }
+  .exp-org {
+    font-size: .8rem; font-weight: 500;
+    color: var(--accent); margin-bottom: .15rem;
+  }
+  .exp-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.12rem; line-height: 1.25;
+    margin-bottom: .55rem;
+  }
+  .exp-context {
+    font-size: .77rem; color: var(--muted);
+    font-style: italic; margin-bottom: 1rem;
+    padding-left: .7rem;
+    border-left: 2px solid var(--line);
+    line-height: 1.6;
+  }
+  .exp-bullets {
+    list-style: none;
+    display: flex; flex-direction: column; gap: .5rem;
+    margin-top: auto;
+  }
+  .exp-bullets li {
+    font-size: .83rem; line-height: 1.75;
+    padding-left: 1.1rem; position: relative;
+    color: #3a3530;
+  }
+  .exp-bullets li::before {
+    content: '—';
+    position: absolute; left: 0;
+    color: var(--accent); font-weight: 500;
+  }
+  .exp-tags {
+    display: flex; flex-wrap: wrap; gap: .35rem;
+    margin-bottom: .9rem;
+  }
+  .exp-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: .57rem; letter-spacing: .07em;
+    padding: .17rem .48rem;
+    background: var(--tag-bg); color: var(--accent);
+  }
+  .exp-tag.green  { background: #e5f3eb; color: #2a7a4b; }
+  .exp-tag.amber  { background: #fdf3e7; color: #9a6200; }
+  .exp-tag.purple { background: #eeedf9; color: #5349a8; }
+  @media (max-width: 768px) {
+    .exp-grid { grid-template-columns: 1fr; }
+    .exp-card.featured { grid-column: span 1; }
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  .edu-card {
+    padding: 2rem; background: var(--card);
+    border: 1px solid var(--line);
+    transition: border-color .2s, transform .2s;
+  }
+  .edu-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .edu-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+  .edu-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem; margin-bottom: .5rem;
+  }
+  .edu-sub { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+  .edu-body { font-size: .84rem; line-height: 1.8; color: #3a3530; }
+
+  /* ── GALLERY ── */
+  .gallery-intro {
+    font-size: .9rem; color: var(--muted);
+    max-width: 55ch; margin-bottom: 2.5rem;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .gallery-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .gallery-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.08); }
+  .gallery-img-wrap {
+    aspect-ratio: 4/3;
+    background: var(--tag-bg);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .gallery-img-wrap input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+  }
+  .gallery-img-wrap img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .gallery-upload-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    text-align: center; pointer-events: none; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  }
+  .gallery-upload-hint span { font-size: 1.8rem; }
+  .gallery-card.has-image .gallery-upload-hint { display: none; }
+  .gallery-info { padding: 1rem 1.2rem 1.2rem; }
+  .gallery-info input[type="text"] {
+    width: 100%; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem; font-weight: 500;
+    color: var(--ink); outline: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: .2rem;
+    transition: border-color .2s;
+  }
+  .gallery-info input[type="text"]:focus { border-color: var(--accent); }
+  .gallery-info input[type="text"]::placeholder { color: var(--muted); font-weight: 300; }
+  .gallery-tag-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+  .gallery-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: .58rem; letter-spacing: .06em;
+    background: var(--tag-bg); color: var(--muted);
+    padding: .15rem .5rem;
+  }
+  .gallery-add-btn {
+    background: none; border: 2px dashed var(--line);
+    aspect-ratio: 4/3 / 1;
+    min-height: 200px;
+    width: 100%; cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: .5rem;
+    transition: border-color .2s, color .2s;
+  }
+  .gallery-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .gallery-add-btn span { font-size: 1.5rem; }
+
+  /* ── CONTACT ── */
+  .contact-row {
+    display: flex; gap: 3rem; flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .contact-left { flex: 1; min-width: 260px; }
+  .contact-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15; margin-bottom: 1.5rem;
+  }
+  .contact-heading em { font-style: italic; color: var(--muted); }
+  .contact-links { display: flex; flex-direction: column; gap: .8rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem; color: var(--ink); text-decoration: none;
+    transition: color .2s;
+  }
+  .contact-link:hover { color: var(--accent); }
+  .contact-link-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase;
+    min-width: 80px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; letter-spacing: .1em;
+    color: var(--muted); text-transform: uppercase;
+  }
+
+  /* ── FADE-IN ANIMATION ── */
+  .fade-up {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1rem; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { border-right: none; border-bottom: 1px solid var(--line); padding: 4rem 1.5rem 3rem; }
+    .hero-right { padding: 3rem 1.5rem; }
+    .section-inner { padding: 3.5rem 1.5rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .timeline-item { grid-template-columns: 1fr; gap: .8rem; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .contact-row { flex-direction: column; }
+    footer { flex-direction: column; gap: .5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Ning-Wei Tsai &mdash; Portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="about">
+  <div class="hero-left">
+    <div class="hero-eyebrow">OCS BA Intern Candidate &mdash; LITEON Light Seeker 2026</div>
+    <h1 class="hero-name">
+      Ning-Wei<br><em>Tsai</em>
+    </h1>
+    <p class="hero-tagline">
+      Engineering rigor meets business judgment. I translate complex data into structured decisions — bridging ITS research, market analytics, and cross-cultural communication.
+    </p>
+    <a href="mailto:h54121163@gs.ncku.edu.tw" class="hero-cta">Get in Touch →</a>
+  </div>
+  <div class="hero-right">
+    <div class="photo-placeholder" id="heroPic">
+      <img src="C:\Users\Wx0u0xW\OneDrive\桌面\常用照片.jpg" alt="Ning-Wei Tsai" class="w-full h-full object-cover rounded-lg">
+      
+      <style>
+        .photo-placeholder img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          border-radius: 8px; /* 根據您的設計調整圓角 */
+        }
+      </style>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <label>University</label>
+        <span>NCKU, Tainan</span>
+      </div>
+      <div class="meta-item">
+        <label>Major</label>
+        <span>TCM Science</span>
+      </div>
+      <div class="meta-item">
+        <label>Language</label>
+        <span>EN / ZH (EMI)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Skills & Competencies</h2>
+    </div>
+    <div class="skills-grid fade-up">
+      <div class="skill-cell">
+        <div class="skill-cell-label">Analytics & Tools</div>
+        <p>Python · PTV Vissim · SSAM · Data Visualization<br>Familiar with data pipeline concepts & multi-variable analysis<br><em>Developing: Power BI & Power Query</em></p>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cell-label">Research & Business Analysis</div>
+        <p>User Study Methodologies · UXD · Business Investment Analysis (ROI / IRR / PE)  · Competitive Analysis · AARRR · Five Forces · SWOT</p>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cell-label">Languages & Communication</div>
+        <p>English<br>Mandarin — Native<br>Cross-cultural facilitation · Stakeholder communication · International presentation (ACM SIGCHI 2025)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Professional Experience</h2>
+    </div>
+    <div class="exp-grid">
+
+      <!-- ZhaoYing — featured full-width -->
+      <div class="exp-card featured fade-up">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Jul 2025 – Present</div>
+            <div class="exp-org">ZhaoYing Tech</div>
+          </div>
+          <div class="exp-card-badge">Part-time Intern</div>
+        </div>
+        <div class="exp-title">SaaS Market Strategy & User Validation</div>
+        <div class="exp-context">SaaS software tools startup — product positioning, competitive research, and go-to-market planning</div>
+        <div class="exp-tags">
+          <span class="exp-tag">Accountability</span>
+          <span class="exp-tag green">Boldness</span>
+          <span class="exp-tag purple">PDCA</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Conducted competitive landscape research across players in the company's target market — including business model analysis of comparable SaaS and mobility service providers, partnership mapping, and Persona development — synthesizing findings into a positioning brief to support go-to-market planning.</li>
+          <li>Challenged the team's assumption-driven pricing instinct by designing and executing a qualitative user validation study: conducted interviews with 5–15 potential users, probing willingness-to-pay and usage scenarios, and distilled responses into a concise summary report.</li>
+        </ul>
+      </div>
+
+      <!-- SIGCHI -->
+      <div class="exp-card fade-up" style="--card-accent: #2a7a4b;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Sep 2024 – May 2025</div>
+            <div class="exp-org">ACM SIGCHI 2025</div>
+          </div>
+          <div class="exp-card-badge">Published</div>
+        </div>
+        <div class="exp-title">Fabric Tag# — Student Design Competition</div>
+        <div class="exp-context">Textile culture preservation & fashion sustainability — UX research and prototype design</div>
+        <div class="exp-tags">
+          <span class="exp-tag">Challenge</span>
+          <span class="exp-tag">Accountability</span>
+          <span class="exp-tag green">Boldness</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Explored an underexplored intersection of textile culture preservation and fashion sustainability — designing research methodology and Persona-based prototypes from first principles as a foundation for future implementation.</li>
+          <li>Led 150+ field interactions across 15 subjects — interviews, affinity mapping, 2 distinct Personas, and a full User Journey Map.</li>
+          <li>Proposed an interactive digital concept aligning SDGs 8, 9, 12 — earning international recognition at ACM SIGCHI 2025 and publication in the ACM Journal.</li>
+        </ul>
+      </div>
+
+      <!-- ITRI -->
+      <div class="exp-card fade-up" style="--card-accent: #D85A30;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Mar 2025 – Jun 2025</div>
+            <div class="exp-org">ITRI x NCKU x Tainan Enterprises</div>
+          </div>
+          <div class="exp-card-badge">Project Manager</div>
+        </div>
+        <div class="exp-title">SDGs Circular Life Initiative</div>
+        <div class="exp-context">ITRI · NCKU · Tainan Enterprises · Chi Mei Museum · Jhih-Kai Experimental Elementary School</div>
+        <div class="exp-tags">
+          <span class="exp-tag">Accountability</span>
+          <span class="exp-tag purple">PDCA</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Served as Project Manager across 3 institutional partners, ITRI, NCKU, and Tainan Enterprises Cultural and Arts Foundation, took full ownership of stakeholder communication, deliverable timelines, and on-site outcome demonstration at Jhih-Kai Experimental Elementary School, earning coverage in ITRI's official press release (Oct 2025).</li>
+          <li>Planned curriculum with NCKU faculty → executed sustainability workshops → gathered real-time feedback → revised documentation for future scalability.</li>
+        </ul>
+      </div>
+
+      <!-- Kobo Hackathon -->
+      <div class="exp-card fade-up" style="--card-accent: #9a6200;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Oct 2024 – Dec 2024</div>
+            <div class="exp-org">SDGs 2024 Hackathon</div>
+          </div>
+          <div class="exp-card-badge award">2nd Place</div>
+        </div>
+        <div class="exp-title">Rakuten Kobo × NCKU — Growth Strategy</div>
+        <div class="exp-context">Structuring a multi-stage AARRR framework to scale Kobo’s college student market share from 10% to 30%."</div>
+        <div class="exp-tags">
+          <span class="exp-tag green">Boldness</span>
+          <span class="exp-tag">Accountability</span>
+          <span class="exp-tag purple">PDCA</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Reframed the brief as a market segmentation problem: applied a 2×2 target matrix (reading habit × e-reader adoption) to identify the highest-leverage conversion segment.</li>
+          <li>Led the analytical pipeline from SWOT and user pain point mapping through a 5-stage AARRR execution plan — with budget allocation and a 6-month milestone roadmap tied to academic calendar triggers.</li>
+        </ul>
+      </div>
+
+         <!-- NCKU ISV -->
+      <div class="exp-card fade-up" style="--card-accent: #9a6200;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Jun 2024 – Jul 2025 · Multiple Terms</div>
+            <div class="exp-org">NCKU ISV</div>
+          </div>
+          <div class="exp-card-badge award">Cultural Partner</div>
+        </div>
+        <div class="exp-title">Cross-Cultural Academic Language Partner Program</div>
+        <div class="exp-context">Partnered with students from University of Auckland (UoA) and University of Melbourne (UoM)</div>
+        <div class="exp-tags">
+          <span class="exp-tag purple">Accountability</span>
+          <span class="exp-tag">Challenge</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Took personal responsibility for partners' cultural adaptation and communication confidence in Taiwan across multiple terms.</li>
+          <li>Developed customized facilitation approaches for each partner — honing cross-cultural sensitivity directly applicable to LITEON's multinational Light Seeker environment.</li>
+        </ul>
+      </div>
+
+      <!-- Taipei Exchange Online Securities Investment Camp -->
+      <div class="exp-card fade-up" style="--card-accent: #004d9a;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">Jun 2025 – Oct 2025</div>
+            <div class="exp-org">Taipei Exchange Online Securities Investment Camp</div>
+          </div>
+          <div class="exp-card-badge award">Excellent Work</div>
+        </div>
+        <div class="exp-title">Emerging Stocks Investment Analysis & Valuation Framework</div>
+        <div class="exp-context">Focus: Growth evaluation of Semiconductor and Green Energy sectors for TPEx review </div>
+        <div class="exp-tags">
+          <span class="exp-tag green">Boldness</span>
+          <span class="exp-tag purple">Challenge</span>
+          <span class="exp-tag">Accountability</span>
+        </div>
+        <ul class="exp-bullets">
+          <li> Constructed a model using <strong>quantitative indicators</strong> to identify high-growth potential in emerging semiconductor and energy firms.</li>
+          <li> Conducted top-down analysis, synthesizing <strong>macroeconomic trends</strong> with <strong>sector-specific insights</strong> (industry operations, revenue growth drivers) to validate the long-term viability of target companies.</li>
+          <li> Transformed complex industrial data into a structured investment brief, directly presenting strategic recommendations to <strong>TPEx</strong>.</li>
+        </ul>
+      </div>
+
+          <!-- Fulbright EMI American Culture Camp -->
+      <div class="exp-card fade-up" style="--card-accent: #bf0a30;">
+        <div class="exp-card-header">
+          <div>
+            <div class="exp-date">27 – 29 Aug 2024</div>
+            <div class="exp-org">Fulbright EMI American Culture Camp @ NTU</div>
+          </div>
+          <div class="exp-card-badge award">Active Participant</div>
+        </div>
+        <div class="exp-title">International Professional Skills & Cultural Exchange</div>
+        <div class="exp-context">3-day full-English immersion focused on professional branding and cross-cultural agility</div>
+        <div class="exp-tags">
+          <span class="exp-tag green">Boldness</span>
+          <span class="exp-tag">Accountability</span>
+          <span class="exp-tag purple">Challenge</span>
+        </div>
+        <ul class="exp-bullets">
+          <li> Mastered high-pressure <strong>Elevator Pitch</strong> techniques and resume crafting, effectively synthesizing personal strengths into concise, persuasive narratives within an international peer group.</li>
+          <li> Led peer-to-peer feedback sessions to optimize presentation impact, ensuring a balance between cultural nuance and professional clarity in final group reports.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Education</h2>
+    </div>
+    <div class="edu-grid fade-up">
+      <div class="edu-card">
+        <div class="edu-label">Sep 2023 – Present</div>
+        <div class="edu-title">B.S. Transportation & Communication Management Science</div>
+        <div class="edu-sub">National Cheng Kung University</div>
+        <div class="edu-body">Cross-disciplinary program bridging ITS engineering and business operations — providing both the data pipeline thinking and commercial judgment relevant to BA Finance roles.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-label">Jan 2026 – Present</div>
+        <div class="edu-title">EDAS Safety Optimization for Mixed Traffic</div>
+        <div class="edu-sub">Undergraduate Research</div>
+        <div class="edu-body">Investigating how to enhance the safety performance of EDAS in mixed connected/non-connected vehicle traffic. The research introduces Time-to-Collision (TTC) as a safety metric, builds a dynamic model-switching decision matrix driven by real-time V/C ratio and OBU penetration rate, and validates results via PTV Vissim micro-simulation.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-label">Feb 2024 - Jun 2024</div>
+        <div class="edu-title">VC Mentor Collaboration — Startup Investment Evaluation</div>
+        <div class="edu-sub">Curriculum: LEARNING ENTREPRENEURSHIP AND BUSINESS OPPORTUNITY IDENTIFICATION FROM A STARTUP INVESTMENT</div>
+        <div class="edu-body">Collaborated with VC mentors to conduct full-scope investment evaluation — Five Forces, SWOT, financial projections.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <span class="section-number">04</span>
+      <h2 class="section-title">Works & Certificates</h2>
+    </div>
+    <div class="gallery-grid fade-up" id="galleryGrid">
+
+      <!-- Pre-filled card 1 -->
+      <div class="gallery-card" id="gc0">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\SDC.png" alt="ACM SIGCHI 2025" class="gallery-static-img">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title-text">ACM SIGCHI 2025 — Fabric Tag# Publication</div>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Research</span>
+            <span class="gallery-tag">ACM Journal</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-card" id="gc1">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\Hackathon.png" alt="SDGs Hackathon Award" class="gallery-static-img">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title-text">SDGs Hackathon — 2nd Place Certificate</div>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Award</span>
+            <span class="gallery-tag">Marketing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-card" id="gc2">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\PM.png" alt="ITRI Press Release" class="gallery-static-img">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title-text">ITRI Official Press Release Coverage</div>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Media</span>
+            <span class="gallery-tag">ITRI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-card" id="gc3">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\Fulbright.png" alt="Fulbright Certificate" class="gallery-static-img">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title-text">Fulbright EMI Certificate</div>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Certificate</span>
+            <span class="gallery-tag">Fulbright</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-card" id="gc4">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\ISV.png" alt="NCKU ISV Service" class="gallery-static-img">
+        </div>
+        <div class="gallery-info">
+          <div class="gallery-title-text">NCKU ISV — Cross-Cultural Partner Certification</div>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Service</span>
+            <span class="gallery-tag">Cross-Cultural</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-card" id="gc6">
+        <div class="gallery-img-wrap">
+          <img src="C:\Users\Wx0u0xW\OneDrive\桌面\114-2\LITEON\certificate\114大專生證券菁英種子培訓營結業證書.png" style="width:100%; height:200px; object-fit: contain; background:#f9f9f9;">
+        </div>
+        <div class="gallery-info">
+          <input type="text" value="Taipei Exchange Investment Camp" readonly>
+          <div class="gallery-tag-row">
+            <span class="gallery-tag">Finance</span>
+            <span class="gallery-tag">Boldness</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-row fade-up">
+      <div class="contact-left">
+        <div class="contact-heading">Let's talk about <em>what I can build</em> for your team.</div>
+      </div>
+      <div>
+        <div class="contact-links">
+          <a href="mailto:h54121163@gs.ncku.edu.tw" class="contact-link">
+            <span class="contact-link-label">Email</span>
+            h54121163@gs.ncku.edu.tw
+          </a>
+          <a href="tel:+886970931114" class="contact-link">
+            <span class="contact-link-label">Phone</span>
+            +886 970-931-114
+          </a>
+          <a href="https://dl.acm.org/doi/10.1145/3706599.3720302" target="_blank" class="contact-link">
+            <span class="contact-link-label">Publication</span>
+            ACM Digital Library →
+          </a>
+          <a href="#" class="contact-link">
+            <span class="contact-link-label">Location</span>
+            Tainan, Taiwan
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Ning-Wei Tsai</span>
+  <span>NCKU · TCM Science · Light Seeker Candidate</span>
+</footer>
+
+<script>
+  // ── FADE-IN ON SCROLL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── HERO PHOTO ──
+  function loadHeroPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const wrap = document.getElementById('heroPic');
+      let img = wrap.querySelector('img');
+      if (!img) { img = document.createElement('img'); wrap.appendChild(img); }
+      img.src = ev.target.result;
+      wrap.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── GALLERY ──
+  let galleryCount = 4;
+
+  function triggerGalleryUpload(idx) {
+    document.getElementById('gi' + idx).click();
+  }
+
+  function loadGalleryImage(e, idx) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const card = document.getElementById('gc' + idx);
+      const wrap = card.querySelector('.gallery-img-wrap');
+      let img = wrap.querySelector('img');
+      if (!img) { img = document.createElement('img'); wrap.appendChild(img); }
+      img.src = ev.target.result;
+      card.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addGalleryCard() {
+    const idx = galleryCount++;
+    const grid = document.getElementById('galleryGrid');
+    const addBtn = grid.querySelector('.gallery-add-btn');
+
+    const card = document.createElement('div');
+    card.className = 'gallery-card';
+    card.id = 'gc' + idx;
+    card.innerHTML = `
+      <div class="gallery-img-wrap" onclick="triggerGalleryUpload(${idx})">
+        <input type="file" accept="image/*" onchange="loadGalleryImage(event,${idx})" style="display:none" id="gi${idx}">
+        <div class="gallery-upload-hint"><span>📎</span>Click to upload</div>
+      </div>
+      <div class="gallery-info">
+        <input type="text" placeholder="Add title...">
+        <div class="gallery-tag-row">
+          <span class="gallery-tag">Work</span>
+        </div>
+      </div>
+    `;
+    grid.insertBefore(card, addBtn);
+  }
+</script>
+</body>
+</html>
